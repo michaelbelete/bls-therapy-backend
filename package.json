@@ -1,0 +1,24 @@
+{
+  "name": "nls-therapy-backend",
+  "version": "1.0.0",
+  "description": "socket server that creates and manage bls sessions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "socket.io",
+    "bls"
+  ],
+  "author": "Michael Belete",
+  "license": "ISC",
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "deta": "^1.1.0",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19",
+    "socket.io": "^4.5.1"
+  }
+}

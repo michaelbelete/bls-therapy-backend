@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Client</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+
+<body>
+    <button type="submit" id="create_session">Create Session</button>
+    <button type="submit" id="get_rooms">Get Rooms</button><br /><br />
+    <form id="join_form">
+        <input id="room" type="text" />
+        <button type="join">join</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        
+        let session;
+        let config;
+
+        var btn = document.getElementById('create_session');
+        var getRoomBtn = document.getElementById('get_rooms');
+       
+        socket.on("connect", function () {
+            console.log("Connected to server");
+        });
+
+        btn.addEventListener('click', function () {
+            socket.emit("create session", function () {
+                console.log("Session emitted");
+            })
+        });
+
+
+        socket.on('create session', (sessionId) => {
+            session = sessionId;
+        })
+
+        getRoomBtn.addEventListener('click', function () {
+            socket.emit("get rooms", () => {
+                console.log("Rooms emitted");
+            });
+        });
+
+
+        socket.on('get rooms', (rooms) => {
+            console.log(rooms);
+        })
+
+        var form = document.getElementById('join_form');
+        var input = document.getElementById('room');
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('join session', input.value);
+                input.value = '';
+            }
+        });
+
+        socket.on('join session', (socket) => {
+            console.log(socket);
+        });
+
+    </script>
+</body>
+
+</html>
