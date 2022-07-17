@@ -42,6 +42,12 @@ io.on('connection', (socket) => {
         io.emit('join session', checkSessionExist);
     })
 
+    socket.on("terminate session", (sessionId) => {
+        const sessionIndex = rooms.findIndex(room => room.sessionId === sessionId);
+        rooms.splice(sessionIndex, 1);
+        io.emit('terminate session', true);
+    })
+
     socket.on("get session", (sessionId) => {
         const result = rooms.find(room => room.sessionId === sessionId);
         if(result) {
