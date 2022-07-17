@@ -3,8 +3,13 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    }
+});
 const crypto = require("crypto");
+const { config } = require('process');
 
 const rooms = [];
 
@@ -13,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+    //creating session event for the therapist 
     socket.on("create session", () => {
         const sessionId = crypto.randomBytes(10).toString("hex");
         const newRoom = {
@@ -27,22 +33,24 @@ io.on('connection', (socket) => {
         io.emit('create session', newRoom);
     })
 
+
     socket.on("join session", (sessionId) => {
-
         const checkSessionExist = rooms.find(room => room.sessionId === sessionId);
-
         if (!checkSessionExist) {
             io.emit("join session", "session doesn\'t exist!!");
         }
-
         io.emit('join session', checkSessionExist);
     })
 
-    socket.on("get config", (sessionId) => {
-        const sessionConfig = rooms.find(room => room.sessionId === sessionId);
-        io.to(sessionId).emit("get config", {
-            sessionConfig
-        })
+    socket.on("get session", (sessionId) => {
+        const result = rooms.find(room => room.sessionId === sessionId);
+        if(result) {
+            io.emit("get session", {
+                ...result,
+            })
+        }else{
+            io.emit("get session", null)
+        }
     });
 
     socket.on("set config", ({ sessionId, config }) => {
@@ -64,7 +72,7 @@ io.on('connection', (socket) => {
 
 });
 
-
-server.listen(3000, () => {
-    console.log('listening on *:3000');
+server.listen(8080, () => {
+    console.log('listening on port 8080');
 });
+// module.exports = app;
